@@ -1,6 +1,6 @@
 import logging
 import re
-import urllib2
+import urllib
 import webapp2
 
 from xml.etree import ElementTree
@@ -41,7 +41,7 @@ class ProcessNewMessage(webapp2.RequestHandler):
             link = ''
 
             # Find the link to this intent.
-            result = urllib2.urlopen('https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15').read()
+            result = urllib.urlopen('https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15').read()
             tree = ElementTree(result)
             for elem in tree.iter(tag='item'):
                 if message.subject in elem.get('title'):
@@ -54,7 +54,7 @@ class ProcessNewMessage(webapp2.RequestHandler):
             raw_data = { 'sender'  : message.sender.encode('utf-8'),
                          'subject' : message.subject.encode('utf-8'),
                          'link'    : link.encode('utf-8')}
-            form_data = urllib2.urlencode(raw_data)
+            form_data = urllib.urlencode(raw_data)
 
             # Send post request to script.
             result = urlfetch.fetch(url=url,
