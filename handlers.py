@@ -1,6 +1,6 @@
 import logging
 import re
-import urllib
+import urllib2
 import webapp2
 
 from xml.etree import ElementTree
@@ -54,7 +54,7 @@ class ProcessNewMessage(webapp2.RequestHandler):
             raw_data = { 'sender'  : message.sender.encode('utf-8'),
                          'subject' : message.subject.encode('utf-8'),
                          'link'    : link.encode('utf-8')}
-            form_data = urllib.urlencode(raw_data)
+            form_data = urllib2.urlencode(raw_data)
 
             # Send post request to script.
             result = urlfetch.fetch(url=url,
