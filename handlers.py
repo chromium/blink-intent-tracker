@@ -23,32 +23,33 @@ class MainPage(webapp2.RequestHandler):
 class ProcessNewMessage(webapp2.RequestHandler):
 
     # Returns true if the thread is an "Intent to *".
-    def isIntent(subject):
+    def isIntent(self, subject):
         # Regexp should not match "Re:..."
-        return re.match(r"^[^:]*[iI]ntent to .*", message.subject.encode('utf-8'))
+        return re.match(r"^[^:]*[iI]ntent to .*", subject.encode('utf-8'))
     
     # Find the link to this intent in the rss feed.
-    def getThreadPermalink(subject):
+    def getThreadPermalink(self, subject):
         result = urllib.urlopen(BLINK_DEV_RSS_URL).read()
         tree = ElementTree.fromstring(result)
         logging.info(tree.attrib)
         for elem in tree.iter('item'):
-            if str(message.subject) == str(elem.find('title').text):
+            if str(subject) == str(elem.find('title').text):
                 return str(elem.find('link').text)
         return ''
 
-    def sendUpdateToAppsScript(message):
-        link = self.getThreadPermalink(subject)
+    def sendUpdateToAppsScript(self, message):
+        link = self.getThreadPermalink(message.subject)
         raw_data = { 'sender'  : message.sender.encode('utf-8'),
                      'subject' : message.subject.encode('utf-8'),
                      'link'    : link.encode('utf-8')}
         form_data = urllib.urlencode(raw_data)
-        result = urlfetch.fetch(url=APPS_SCRIPT_ENDPOINT,
-                                payload=form_data,
-                                method=urlfetch.POST,
-                                headers={'Content-Type': 'application/x-www-form-urlencoded'})
+        logging.info(form_data)
+        urlfetch.fetch(url=APPS_SCRIPT_ENDPOINT,
+                       payload=form_data,
+                       method=urlfetch.POST,
+                       headers={'Content-Type': 'application/x-www-form-urlencoded'})
 
-    def logEmailMessage(message):
+    def logEmailMessage(self, message):
         logging.info('----- message.sender:\n')
         logging.info(message.sender)
         logging.info('----- message.subject:\n')
@@ -61,6 +62,7 @@ class ProcessNewMessage(webapp2.RequestHandler):
     def post(self):
     	message = mail.InboundEmailMessage(self.request.body)
         if self.isIntent(message.subject):
+            logging.info('It is an intent!')
             self.sendUpdateToAppsScript(message)
 
             
