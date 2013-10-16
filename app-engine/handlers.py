@@ -39,9 +39,9 @@ class ProcessNewMessage(webapp2.RequestHandler):
 
     def sendUpdateToAppsScript(self, message):
         link = self.getThreadPermalink(message.subject)
-        raw_data = { 'sender'  : message.sender.encode('utf-8'),
-                     'subject' : message.subject.encode('utf-8'),
-                     'link'    : link.encode('utf-8')}
+        raw_data = { 'sender': message.sender.encode('utf-8'),
+                     'subject': message.subject.encode('utf-8'),
+                     'link': link.encode('utf-8')}
         form_data = urllib.urlencode(raw_data)
         logging.info(form_data)
         urlfetch.fetch(url=APPS_SCRIPT_ENDPOINT,
@@ -64,6 +64,8 @@ class ProcessNewMessage(webapp2.RequestHandler):
         if self.isIntent(message.subject):
             logging.info('It is an intent!')
             self.sendUpdateToAppsScript(message)
+        # Next up: elif self.isIntentReplyFromOwner(message.subject):
+
 
             
 application = webapp2.WSGIApplication([
