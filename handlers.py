@@ -40,12 +40,16 @@ class ProcessNewMessage(webapp2.RequestHandler):
 
             link = ''
 
-            # Find the link to this intent.
+            # Find the link to this intent in the rss feed.
             result = urllib.urlopen('https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15').read()
-            tree = ElementTree(result)
-            for elem in tree.iter(tag='item'):
-                if message.subject in elem.get('title'):
-                    link = elem.get('link')
+            tree = ElementTree.fromstring(result)
+            logging.info(tree.attrib)
+            for elem in tree.iter('item'):
+                if str(message.subject) == str(elem.find('title').text):
+                    link = str(elem.find('link').text)
+                    break
+
+            logging.info(link)
 
             # Endpoint for the Google Apps script that handles Blink intents.
             url = 'https://script.google.com/macros/s/AKfycbxC7WYOYdLxY40wvP3DwNfK9OAT_fYXRHZzavn1_BzJQqU4akc/exec'
