@@ -38,7 +38,7 @@ class ProcessNewMessage(webapp2.RequestHandler):
         return ''
 
     def sendUpdateToAppsScript(message):
-        link = getThreadPermalink(subject)
+        link = self.getThreadPermalink(subject)
         raw_data = { 'sender'  : message.sender.encode('utf-8'),
                      'subject' : message.subject.encode('utf-8'),
                      'link'    : link.encode('utf-8')}
@@ -60,8 +60,8 @@ class ProcessNewMessage(webapp2.RequestHandler):
 
     def post(self):
     	message = mail.InboundEmailMessage(self.request.body)
-        if isIntent(message.subject):
-            sendUpdateToAppsScript(message)
+        if self.isIntent(message.subject):
+            self.sendUpdateToAppsScript(message)
 
             
 application = webapp2.WSGIApplication([
