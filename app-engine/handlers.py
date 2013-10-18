@@ -1,3 +1,7 @@
+# Copyright 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
 import logging
 import re
 import urllib
@@ -33,9 +37,9 @@ class ProcessNewMessage(webapp2.RequestHandler):
         tree = ElementTree.fromstring(result)
         logging.info(tree.attrib)
         for elem in tree.iter('item'):
-            if str(subject) == str(elem.find('title').text):
-                return str(elem.find('link').text)
-        return ''
+            if subject == '[blink-dev] ' + elem.find('title').text:
+                return elem.find('link').text
+        return 'No link found'
 
     def sendUpdateToAppsScript(self, message):
         link = self.getThreadPermalink(message.subject)
