@@ -31,13 +31,20 @@ class ProcessNewMessage(webapp2.RequestHandler):
         # Regexp should not match "Re:..."
         return re.match(r"^[^:]*[iI]ntent to .*", subject.encode('utf-8'))
     
-    # Find the link to this intent in the rss feed.
+    # Find the link to this intent in the RSS feed.
+    # TODO(meh): Fix race condition with RSS feed.  Often the RSS feed hasn't been updated by the time
+    # this code receives the email.  Alternatives:
+    # - Sleep for 1hr.  Might prevent the server from handlying other inputs sent in that timefram.
+    # - Subscribe to the RSS feed and:
+    #   - Send another request to the trix apps script with the link.
+    #   - Store the email information here locally until the RSS link comes in.  Then send the request to Apps Script with everything.
+    # - Multithreading?
     def getThreadPermalink(self, subject):
         result = urllib.urlopen(BLINK_DEV_RSS_URL).read()
         tree = ElementTree.fromstring(result)
         logging.info(tree.attrib)
         for elem in tree.iter('item'):
-            if subject == '[blink-dev] ' + elem.find('title').text:
+            if subject.encode('utf-8') == '[blink-dev] ' + elem.find('title').text:
                 return elem.find('link').text
         return 'No link found'
 
