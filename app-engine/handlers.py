@@ -23,6 +23,11 @@ class MainPage(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.write('Hello, World!')
 
+class ProcessRssTopic(webapp2.RequestHandler):
+
+    def post(self):
+        logging.info(self.request.body)
+
 
 class ProcessNewMessage(webapp2.RequestHandler):
 
@@ -81,6 +86,7 @@ class ProcessNewMessage(webapp2.RequestHandler):
             
 application = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/_ah/mail/blink-update@blink-intent-tracker\.appspotmail\.com', ProcessNewMessage),
+    ('/rss-handler', ProcessRssUpdate),
+#    ('/_ah/mail/blink-update@blink-intent-tracker\.appspotmail\.com', ProcessNewMessage),
     # Google account pswrd: blink-updat (no 'e')
 ], debug=True)
