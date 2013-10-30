@@ -23,12 +23,20 @@ class MainPage(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.write('Hello, World!')
 
+# Process new RSS topics.
 class ProcessRssTopic(webapp2.RequestHandler):
 
     def post(self):
         logging.info(self.request.body)
 
+    # TODO(meh): extract subject, sender, and link from the RSS topic.  Load the thread in the web UI.
+    # Parse the message to extract the chromestatus.com link and owp launch bug.
+    # Send update to Apps Script.
+    # You can reuse some code from below.
 
+    # TODO(meh): Test if API owners LGTMed in their replies.
+
+# Process new email messages from blink-dev.
 class ProcessNewMessage(webapp2.RequestHandler):
 
     # Returns true if the thread is an "Intent to *".
@@ -86,7 +94,7 @@ class ProcessNewMessage(webapp2.RequestHandler):
             
 application = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/rss-handler', ProcessRssUpdate),
+    ('/rss-handler', ProcessRssTopic),
 #    ('/_ah/mail/blink-update@blink-intent-tracker\.appspotmail\.com', ProcessNewMessage),
     # Google account pswrd: blink-updat (no 'e')
 ], debug=True)
