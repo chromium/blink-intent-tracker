@@ -26,7 +26,12 @@ class MainPage(webapp2.RequestHandler):
 # Process new RSS topics.
 class ProcessRssTopic(webapp2.RequestHandler):
 
+    # items[0].permalinkUrl.
+    # items[0].title
     def post(self):
+        rssUpdate = json.loads(self.request.body)
+        logging.info(rssUpdate.items[0].permalinkUrl)
+        logging.info(rssUpdate.items[0].title)
         logging.info(self.request.body)
 
     # TODO(meh): extract subject, sender, and link from the RSS topic.  Load the thread in the web UI.
