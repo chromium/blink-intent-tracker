@@ -51,7 +51,7 @@ class ProcessRssTopic(webapp2.RequestHandler):
         logging.info(rssUpdate['items'][0]['permalinkUrl'])
         logging.info(rssUpdate['items'][0]['title'])
         sendUpdateToAppsScript(
-            rssUpdate['items'][0]['displayName'], 
+            rssUpdate['items'][0]['actor']['displayName'], 
             rssUpdate['items'][0]['title'], 
             rssUpdate['items'][0]['permalinkUrl'])
 
