@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import json
 import logging
 import re
 import urllib
@@ -16,6 +17,16 @@ BLINK_DEV_RSS_URL = 'https://groups.google.com/a/chromium.org/forum/feed/blink-d
 APPS_SCRIPT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxC7WYOYdLxY40wvP3DwNfK9OAT_fYXRHZzavn1_BzJQqU4akc/exec'
 OWNERS = ["abarth", "darin", "dglazkov", "eseidel", "jochen", "ojan", "tkent"]
 
+def sendUpdateToAppsScript(sender, subject, link):
+    raw_data = { 'sender': sender.encode('utf-8'),
+                 'subject': subject.encode('utf-8'),
+                 'link': link.encode('utf-8')}
+    form_data = urllib.urlencode(raw_data)
+    logging.info(form_data)
+    urlfetch.fetch(url=APPS_SCRIPT_ENDPOINT,
+                   payload=form_data,
+                   method=urlfetch.POST,
+                   headers={'Content-Type': 'application/x-www-form-urlencoded'})
 
 class MainPage(webapp2.RequestHandler):
 
@@ -26,13 +37,23 @@ class MainPage(webapp2.RequestHandler):
 # Process new RSS topics.
 class ProcessRssTopic(webapp2.RequestHandler):
 
+    # Returns true if the thread is an "Intent to *".
+    def isIntent(self, subject):
+        return re.match(r"^[^:]*[iI]ntent to .*", subject.encode('utf-8'))
+
     # items[0].permalinkUrl.
     # items[0].title
     def post(self):
         rssUpdate = json.loads(self.request.body)
-        logging.info(rssUpdate.items[0].permalinkUrl)
-        logging.info(rssUpdate.items[0].title)
-        logging.info(self.request.body)
+        logging.info(rssUpdate)
+        logging.info(rssUpdate['items'])
+        logging.info(rssUpdate['items'][0])
+        logging.info(rssUpdate['items'][0]['permalinkUrl'])
+        logging.info(rssUpdate['items'][0]['title'])
+        sendUpdateToAppsScript(
+            rssUpdate['items'][0]['displayName'], 
+            rssUpdate['items'][0]['title'], 
+            rssUpdate['items'][0]['permalinkUrl'])
 
     # TODO(meh): extract subject, sender, and link from the RSS topic.  Load the thread in the web UI.
     # Parse the message to extract the chromestatus.com link and owp launch bug.
@@ -48,35 +69,6 @@ class ProcessNewMessage(webapp2.RequestHandler):
     def isIntent(self, subject):
         # Regexp should not match "Re:..."
         return re.match(r"^[^:]*[iI]ntent to .*", subject.encode('utf-8'))
-    
-    # Find the link to this intent in the RSS feed.
-    # TODO(meh): Fix race condition with RSS feed.  Often the RSS feed hasn't been updated by the time
-    # this code receives the email.  Alternatives:
-    # - Sleep for 1hr.  Might prevent the server from handlying other inputs sent in that timefram.
-    # - Subscribe to the RSS feed and:
-    #   - Send another request to the trix apps script with the link.
-    #   - Store the email information here locally until the RSS link comes in.  Then send the request to Apps Script with everything.
-    # - Multithreading?
-    def getThreadPermalink(self, subject):
-        result = urllib.urlopen(BLINK_DEV_RSS_URL).read()
-        tree = ElementTree.fromstring(result)
-        logging.info(tree.attrib)
-        for elem in tree.iter('item'):
-            if subject.encode('utf-8') == '[blink-dev] ' + elem.find('title').text:
-                return elem.find('link').text
-        return 'No link found'
-
-    def sendUpdateToAppsScript(self, message):
-        link = self.getThreadPermalink(message.subject)
-        raw_data = { 'sender': message.sender.encode('utf-8'),
-                     'subject': message.subject.encode('utf-8'),
-                     'link': link.encode('utf-8')}
-        form_data = urllib.urlencode(raw_data)
-        logging.info(form_data)
-        urlfetch.fetch(url=APPS_SCRIPT_ENDPOINT,
-                       payload=form_data,
-                       method=urlfetch.POST,
-                       headers={'Content-Type': 'application/x-www-form-urlencoded'})
 
     def logEmailMessage(self, message):
         logging.info('----- message.sender:\n')
@@ -92,7 +84,8 @@ class ProcessNewMessage(webapp2.RequestHandler):
     	message = mail.InboundEmailMessage(self.request.body)
         if self.isIntent(message.subject):
             logging.info('It is an intent!')
-            self.sendUpdateToAppsScript(message)
+            link = self.getThreadPermalink(message.subject)
+            sendUpdateToAppsScript(message.sender, message.subject, link)
         # Next up: elif self.isIntentReplyFromOwner(message.subject):
 
 
