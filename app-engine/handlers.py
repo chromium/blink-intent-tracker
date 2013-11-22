@@ -45,15 +45,19 @@ class ProcessRssTopic(webapp2.RequestHandler):
     # items[0].title
     def post(self):
         rssUpdate = json.loads(self.request.body)
+
         logging.info(rssUpdate)
         logging.info(rssUpdate['items'])
         logging.info(rssUpdate['items'][0])
         logging.info(rssUpdate['items'][0]['permalinkUrl'])
         logging.info(rssUpdate['items'][0]['title'])
-        sendUpdateToAppsScript(
-            rssUpdate['items'][0]['actor']['displayName'], 
-            rssUpdate['items'][0]['title'], 
-            rssUpdate['items'][0]['permalinkUrl'])
+
+        if (self.isIntent(rssUpdate['items'][0]['title'])):
+            logging.info("It's an intent!")
+            sendUpdateToAppsScript(
+                rssUpdate['items'][0]['actor']['displayName'], 
+                rssUpdate['items'][0]['title'], 
+                rssUpdate['items'][0]['permalinkUrl'])
 
     # TODO(meh): extract subject, sender, and link from the RSS topic.  Load the thread in the web UI.
     # Parse the message to extract the chromestatus.com link and owp launch bug.
