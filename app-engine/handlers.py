@@ -39,7 +39,7 @@ class ProcessRssTopic(webapp2.RequestHandler):
 
     # Returns true if the thread is an "Intent to *".
     def isIntent(self, subject):
-        return re.match(r"^[^:]*[iI]ntent to .*", subject.encode('utf-8'))
+        return re.match(r"^[^:]*intent to .*", subject.encode('utf-8').lower())
 
     # items[0].permalinkUrl.
     # items[0].title
