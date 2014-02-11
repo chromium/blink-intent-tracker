@@ -33,13 +33,10 @@ class ProcessRssTopic(webapp2.RequestHandler):
 
     def post(self):
         rssUpdate = json.loads(self.request.body)
-
         logging.info(rssUpdate)
-
         for item in rssUpdate['items']:
             logging.info(item['permalinkUrl'])
             logging.info(item['title'])
-
             if (self.isIntent(rssUpdate['items'][0]['title'])):
                 logging.info("It's an intent!")
                 sendUpdateToAppsScript(
