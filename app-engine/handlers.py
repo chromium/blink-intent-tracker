@@ -45,21 +45,21 @@ class ProcessRssTopic(webapp2.RequestHandler):
         rssUpdate = json.loads(self.request.body)
 
         logging.info(rssUpdate)
-        logging.info(rssUpdate['items'])
-        logging.info(rssUpdate['items'][0])
-        logging.info(rssUpdate['items'][0]['permalinkUrl'])
-        logging.info(rssUpdate['items'][0]['title'])
 
-        if (self.isIntent(rssUpdate['items'][0]['title'])):
-            logging.info("It's an intent!")
-            sendUpdateToAppsScript(
-                rssUpdate['items'][0]['actor']['displayName'], 
-                rssUpdate['items'][0]['title'], 
-                rssUpdate['items'][0]['permalinkUrl'])
+        for item in rssUpdate['items']:
+            logging.info(item['permalinkUrl'])
+            logging.info(item['title'])
+
+            if (self.isIntent(rssUpdate['items'][0]['title'])):
+                logging.info("It's an intent!")
+                sendUpdateToAppsScript(
+                    item['actor']['displayName'], 
+                    item['title'], 
+                    item['permalinkUrl'])
 
     # TODO(meh): Test if API owners LGTMed in their replies.
    
-            
+
 application = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/rss-handler', ProcessRssTopic),
