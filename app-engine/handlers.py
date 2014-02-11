@@ -7,14 +7,11 @@ import logging
 import re
 import urllib
 import webapp2
-from xml.etree import ElementTree
-from google.appengine.api import mail
 from google.appengine.api import urlfetch
 
 
-BLINK_DEV_RSS_URL = 'https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15'
 APPS_SCRIPT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxC7WYOYdLxY40wvP3DwNfK9OAT_fYXRHZzavn1_BzJQqU4akc/exec'
-OWNERS = ["abarth", "darin", "dglazkov", "eseidel", "jochen", "ojan", "tkent"]
+# OWNERS = ["abarth", "darin", "dglazkov", "eseidel", "jochen", "ojan", "tkent"]
 
 
 def sendUpdateToAppsScript(sender, subject, link):
@@ -27,13 +24,6 @@ def sendUpdateToAppsScript(sender, subject, link):
                    payload=form_data,
                    method=urlfetch.POST,
                    headers={'Content-Type': 'application/x-www-form-urlencoded'})
-
-
-class MainPage(webapp2.RequestHandler):
-
-    def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, World!')
 
 
 class ProcessRssTopic(webapp2.RequestHandler):
@@ -61,6 +51,5 @@ class ProcessRssTopic(webapp2.RequestHandler):
    
 
 application = webapp2.WSGIApplication([
-    ('/', MainPage),
-    ('/rss-handler', ProcessRssTopic),
+    ('/rss-handler', ProcessRssTopic)
 ], debug=True)
