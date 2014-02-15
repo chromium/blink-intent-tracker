@@ -29,7 +29,7 @@ def sendUpdateToAppsScript(sender, subject, link):
 class ProcessRssTopic(webapp2.RequestHandler):
 
     def isIntent(self, subject):
-        return re.match(r"^[^:]*intent to .*", subject.encode('utf-8').lower())
+        return re.match(r"^.*intent to .*:.*$", subject.encode('utf-8').lower())
 
     def post(self):
         rssUpdate = json.loads(self.request.body)
