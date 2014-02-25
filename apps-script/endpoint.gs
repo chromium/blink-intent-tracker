@@ -7,8 +7,8 @@
 var INTENTS = [" implement"," deprecate"," ship"," remove"];
 
 function doPost(request) {
-  var ss = SpreadsheetApp.openById('0AjGgk26K1Cc-dHJKNGtlLVlmSGRIYVR3LVRGYnVCRVE');
-  var sheet = ss.getSheetByName('DATA');
+  var ss = SpreadsheetApp.openById("0AjGgk26K1Cc-dHJKNGtlLVlmSGRIYVR3LVRGYnVCRVE");
+  var sheet = ss.getSheetByName("DATA");
   var lastRow = sheet.getLastRow();
   var currentRow = lastRow + 1;
   Logger.log("Intent received!");
