@@ -17,8 +17,7 @@ function doPost(request) {
   sheet.getRange(currentRow, 2, 1).setValue(Utilities.formatDate(new Date(), "PST", "MM/dd/yyyy"));
   sheet.getRange(currentRow, 3, 1).setValue(request.parameter.sender); // Sender
   sheet.getRange(currentRow, 4, 1).setValue(getIntentType(request.parameter.subject));
-  sheet.getRange(currentRow, 5, 1).setValue(getSubject(request.parameter.subject));
-  sheet.getRange(currentRow, 6, 1).setValue("=HYPERLINK(\""+request.parameter.link+"\", \"link\")");
+  sheet.getRange(currentRow, 5, 1).setValue("=HYPERLINK(\"" + request.parameter.link + "\", \"" + getSubject(request.parameter.subject) + "\")");
 }
 
 function getIntentType(subject) {
