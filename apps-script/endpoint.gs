@@ -39,9 +39,11 @@ function getSubject(subject) {
     if (curIntentTypeEndIndex >= lastIntentTypeEndIndex)
       lastIntentTypeEndIndex = curIntentTypeEndIndex;
   }
-  if (lastIntentTypeEndIndex == -1)
-    Logger.log("Intent type string not found.");
-  return subject.substring(lastIntentTypeEndIndex+1).trim(); // If there's a colon, the "+1" should get rid of it.
+  if (lastIntentTypeEndIndex == -1) Logger.log("Intent type string not found.");
+  // If there's a colon, the "+1" should get rid of it.
+  var trimmedSubject =  subject.substring(lastIntentTypeEndIndex+1).trim();
+  // Double quotes don't play nice with Google Spreadsheets.
+  return trimmedSubject.replace(/"/, "'");
 }
 
 function capitalizeFirstLetter(string) {
