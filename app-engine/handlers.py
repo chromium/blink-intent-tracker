@@ -10,7 +10,7 @@ import webapp2
 from google.appengine.api import urlfetch
 
 
-APPS_SCRIPT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxC7WYOYdLxY40wvP3DwNfK9OAT_fYXRHZzavn1_BzJQqU4akc/exec'
+APPS_SCRIPT_ENDPOINT = 'https://script.google.com/a/chromium.org/macros/s/AKfycby-kGgowUQ0Ol_KxgL9VyWSRrz7ZrwsuoyM8JwPxvhG4x7VAlQy/exec'
 
 RSS_FEED = 'https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15'
 
