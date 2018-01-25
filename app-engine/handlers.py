@@ -12,6 +12,8 @@ from google.appengine.api import urlfetch
 
 APPS_SCRIPT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxC7WYOYdLxY40wvP3DwNfK9OAT_fYXRHZzavn1_BzJQqU4akc/exec'
 
+RSS_FEED = 'https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15'
+
 
 def sendUpdateToAppsScript(sender, subject, link):
     raw_data = {'sender': sender.encode('utf-8'),
@@ -43,6 +45,19 @@ class ProcessRssTopic(webapp2.RequestHandler):
                     item['actor']['displayName'],
                     item['title'],
                     item['permalinkUrl'])
+
+    def get(self):
+        if self.request.GET['hub.topic'] != RSS_FEED:
+            self.error(400)
+            return
+
+        if self.request.GET['hub.mode'] != 'subscribe':
+            self.error(400)
+            return
+
+        self.response.headers['Content-Type'] = 'text/plain'
+        self.response.out.write(self.request.GET['hub.challenge'])
+        return 
 
     # TODO(meh): Test if API owners LGTMed in their replies.
 
