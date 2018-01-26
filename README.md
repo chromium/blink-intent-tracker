@@ -8,6 +8,6 @@ Not everything is automated; [some work still needs to be done manually](https:/
 Overview
 --------
 
-* `jochen@chromium.org` has a [PuSH](https://pubsubhubbub.appspot.com/) Pubsubhubbub profile configured to send a POST request to `https://blink-intent-tracker-193211.appspot.com/rss-handler` whenever the [blink-dev 'topics' RSS feed](https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15) is updated.
+* `jochen@chromium.org` has a [Superfeedr](https://superfeedr.com/) Pubsubhubbub profile configured to send a POST request to `https://blink-intent-tracker-193211.appspot.com/rss-handler` whenever the [blink-dev 'topics' RSS feed](https://groups.google.com/a/chromium.org/forum/feed/blink-dev/topics/rss.xml?num=15) is updated.
 * The blink-intent-tracker App Engine app (owned by `jochen@chromium.org`) processes the updates and sends a stripped down version to the [Apps Script web app](https://developers.google.com/apps-script/execution_web_apps) (also owned by `jochen@chromium.org`).
 * The Apps Script web app adds the relevant content to the first empty row in the ["Blink Intents" Google Spreadsheet](https://docs.google.com/a/chromium.org/spreadsheet/ccc?key=0AjGgk26K1Cc-dHJKNGtlLVlmSGRIYVR3LVRGYnVCRVE).
