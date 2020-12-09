@@ -43,7 +43,7 @@ function getSubject(subject) {
   // If there's a colon, the "+1" should get rid of it.
   var trimmedSubject =  subject.substring(lastIntentTypeEndIndex+1).trim();
   // Double quotes don't play nice with Google Spreadsheets.
-  return trimmedSubject.replace(/"/, "'");
+  return trimmedSubject.replace(/"/g, "'");
 }
 
 function capitalizeFirstLetter(string) {
